@@ -190,8 +190,8 @@ curl X DELETE http://localhost:8080/user/order -H "Authorization: Bearer bc096c3
 
 To configure the project to run on HTTPS as shown in Building REST services with Spring, enable the https profile. You can do this by uncommenting the appropriate line in the application.properties file of this project. This will change the server port to 8443. Modify the previous requests as in the following command.
 
-...
+```
 curl -X POST -k -vu clientapp:123456 https://localhost:8443/oauth/token -H "Accept: application/json" -d "password=aingeiR2&username=admin&grant_type=password&scope=read%20write&client_secret=123456&client_id=clientapp"
-...
+```
 
 The -k parameter is necessary to allow connections to SSL sites without valid certificates or the self signed certificate which is created for this project.
