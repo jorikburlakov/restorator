@@ -42,7 +42,7 @@ User Endpoints:
 
 - GET     http://localhost:8080/user/order \\get current lunch which was ordered by user
 
-- POST    http://localhost:8080/user/order/{rest_id}/lunch/{name} \\vote lunch in restaraunt with id={rest_id} and lunch name={name}
+- POST    http://localhost:8080/restaurants/{rest_id}/lunch/{name}/order \\vote lunch in restaraunt with id={rest_id} and lunch name={name}
 
 - DELETE  http://localhost:8080/user/order \\ delete 
 
@@ -93,7 +93,7 @@ A successful authorization results in the following JSON response:
 In order to access the protected user resource, you should registrate. 
 
 ```
-curl -X POST  http://localhost:8080registration -H "Accept: application/json" -d "{"name":"George","login":"alpha","password":"password1"}"
+curl -X POST  http://localhost:8080/registration -H "Accept: application/json" -d "{"name":"George","login":"alpha","password":"password1"}"
 ```
 
 After that you should send request an access token via the OAuth handshake. Request OAuth authorization:
@@ -168,3 +168,30 @@ curl X DELETE http://localhost:8080/admin/restaurants/1/lunch/fresh%20menu  -H "
 ```
 
 # User Request Example
+
+
+```
+curl http://localhost:8080/user/restaurants -H "Authorization: Bearer bc096c33-4b94-4141-9ad3-85f00324ca7c"
+```
+
+```
+curl http://localhost:8080/user/order -H "Authorization: Bearer bc096c33-4b94-4141-9ad3-85f00324ca7c"
+```
+
+```
+curl X POST http://localhost:8080/user/restaurants/1/lunch/fresh%20menu/order -H "Authorization: Bearer bc096c33-4b94-4141-9ad3-85f00324ca7c" 
+```
+
+```
+curl X DELETE http://localhost:8080/user/order -H "Authorization: Bearer bc096c33-4b94-4141-9ad3-85f00324ca7c" 
+```
+
+#SSL
+
+To configure the project to run on HTTPS as shown in Building REST services with Spring, enable the https profile. You can do this by uncommenting the appropriate line in the application.properties file of this project. This will change the server port to 8443. Modify the previous requests as in the following command.
+
+...
+curl -X POST -k -vu clientapp:123456 https://localhost:8443/oauth/token -H "Accept: application/json" -d "password=aingeiR2&username=admin&grant_type=password&scope=read%20write&client_secret=123456&client_id=clientapp"
+...
+
+The -k parameter is necessary to allow connections to SSL sites without valid certificates or the self signed certificate which is created for this project.
