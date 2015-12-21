@@ -47,7 +47,7 @@ public class UserRestaurantController {
     }
 
 
-    @RequestMapping(value = "/restaurants/", method = RequestMethod.GET)
+    @RequestMapping(value = "/restaurants", method = RequestMethod.GET)
     public Iterable<RestaurantDTO> list() {
         return Converter.convertRestaurant(lunchMenuRepository.findByUpdatedBetween(DataHelper.getYesterdayOrderTime(), DataHelper.getTodayOrderTime()).stream().map(v -> v.getRestaurant()).collect(Collectors.toList()), true);
     }

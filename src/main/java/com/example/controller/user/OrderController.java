@@ -40,7 +40,6 @@ public class OrderController {
     private final Gson gson;
 
 
-
     private final OrderRepository orderRepository;
 
     private final LunchMenuRepository lunchMenuRepository;
@@ -50,7 +49,7 @@ public class OrderController {
     private final UserRepository userRepository;
 
     @Autowired
-    public OrderController(Gson gson,  OrderRepository orderRepository, LunchMenuRepository lunchMenuRepository, RestaurantRepository restaurantRepository, UserRepository userRepository) {
+    public OrderController(Gson gson, OrderRepository orderRepository, LunchMenuRepository lunchMenuRepository, RestaurantRepository restaurantRepository, UserRepository userRepository) {
         this.gson = gson;
 
         this.orderRepository = orderRepository;
@@ -66,9 +65,9 @@ public class OrderController {
     }
 
 
-    @RequestMapping(value = "/order/{rest_id}/lunch/{name}", method = RequestMethod.POST)
+    @RequestMapping(value = "/restaurants/{rest_id}/lunch/{name}/order", method = RequestMethod.POST)
     public String order(@PathVariable Long rest_id, @PathVariable String name) {
-        if(DataHelper.isCanCreateOrder()) {
+        if (DataHelper.isCanCreateOrder()) {
             Restaurant restaurant = restaurantRepository.findOne(rest_id);
             if (restaurant != null) {
                 Order order = orderRepository.findByCustomerLoginAndUpdatedBetween(SecurityContextHolder.getContext().getAuthentication().getName(), DataHelper.getYesterdayOrderTime(), DataHelper.getTodayOrderTime());
@@ -82,19 +81,19 @@ public class OrderController {
                 return "ok";
             } else
                 throw new IllegalArgumentException("Restaurant not found");
-        }
-        return "Can't create order, you can create order tommorow before 11:00 by"+ ZoneId.systemDefault().getId();
+        } else
+            return "Can't create order, you can create order tommorow before 11:00 by" + ZoneId.systemDefault().getId();
     }
 
 
-
-
-    @RequestMapping(value = "order", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/order", method = RequestMethod.DELETE)
     public String delete() {
-        orderRepository.deleteByCustomerLoginAndUpdatedBetween(SecurityContextHolder.getContext().getAuthentication().getName(),
-                DataHelper.getYesterdayOrderTime(), DataHelper.getTodayOrderTime());
-        return "ok";
+        if (DataHelper.isCanCreateOrder()) {
+            orderRepository.deleteByCustomerLoginAndUpdatedBetween(SecurityContextHolder.getContext().getAuthentication().getName(),
+                    DataHelper.getYesterdayOrderTime(), DataHelper.getTodayOrderTime());
+            return "ok";
 
+        } else
+            return "Can't delete order, you can delete order only before 11:00 by" + ZoneId.systemDefault().getId();
     }
-
 }

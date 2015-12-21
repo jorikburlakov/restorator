@@ -48,13 +48,13 @@ public class AdminRestaurantController {
     }
 
 
-    @RequestMapping(value = "/restaurants/", method = RequestMethod.GET)
+    @RequestMapping(value = "/restaurants", method = RequestMethod.GET)
     public Iterable<RestaurantDTO> list() {
         return Converter.convertRestaurant(restaurantRepository.findAll(), false);
     }
 
 
-    @RequestMapping(value = "/restaurants/add", method = RequestMethod.POST)
+    @RequestMapping(value = "/restaurants", method = RequestMethod.POST)
     public String add(@RequestBody String body) {
         RestaurantDTO restaurant = gson.fromJson(body, RestaurantDTO.class);
 

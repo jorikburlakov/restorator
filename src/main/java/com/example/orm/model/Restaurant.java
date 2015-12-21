@@ -26,7 +26,7 @@ public class Restaurant implements Serializable {
 	private String description;
 
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
+	@OneToMany(fetch = FetchType.EAGER, cascade =CascadeType.ALL, mappedBy = "restaurant")
 	private List<LunchMenu> menu = new ArrayList<>();
 
 
