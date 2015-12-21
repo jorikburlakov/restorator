@@ -9,4 +9,189 @@ The following projects are used in this sample app:
 - Spring Security
 - Spring Security OAuth
 - Spring Data JPA
-- 
+- Hibernate
+- GSON
+- Maven
+
+# Build and Run
+
+Install PostgreSQL 9.x version
+
+Create Database restorator from PgAdmin or Script. You can set up your data source setting in application.properties.
+
+Maven:
+
+mvn clean package spring-boot:run
+
+IDEA or Eclipse 
+
+mvn clean install
+
+run Application.java
+
+or run like WebApp
+
+# Endpoints
+
+Public:
+
+- POST http://localhost:8080/registration  \\endpoint for registration
+- POST http://localhost:8080/oauth/token  \\endpoint for authorization
+
+User Endpoints:
+
+- GET     http://localhost:8080/user/order \\get current lunch which was ordered by user
+
+- POST    http://localhost:8080/restaurants/{rest_id}/lunch/{name}/order \\vote lunch in restaraunt with id={rest_id} and lunch name={name}
+
+- DELETE  http://localhost:8080/user/order \\ delete 
+
+- GET     http://localhost:8080/user/restaurants \\get restaurants info with lunch menu
+
+
+Admin Endpoints:
+
+- GET     http://localhost:8080/admin/restaurants \\get list of restaurants
+
+- POST    http://localhost:8080/admin/restaurants \\add restaurant
+
+- PUT     http://localhost:8080/admin/restaurants/{id} \\update restaurant with id={id}
+
+- DELETE  http://localhost:8080/admin/restaurants/{id} \\delete restaurant with id={id}
+
+- GET     http://localhost:8080/admin/restaurants/{id}/orders \\get today list of ordered lunches
+
+- GET     http://localhost:8080/admin/restaurants/{rest_id}/lunchToday \\get list of lunch menus which ware created admin on today
+
+- GET     http://localhost:8080/admin/restaurants/{rest_id}/lunchTomorrow \\get list of lunch menus which ware created admin on tomorrow
+
+- POST    http://localhost:8080/admin/restaurants/{rest_id}/lunch \\add lunch menu for restaurant with id={rest_id}
+
+- PUT     http://localhost:8080/admin/restaurants/{rest_id}/lunch \\add lunch menu for restaurant with id={rest_id}
+
+- DELETE  http://localhost:8080/admin/restaurants/{rest_id}/lunch/{name} \\delete lunch menu with name={name} for restaurant with id={rest_id}
+
+# Usage
+
+In order to access the protected admin resource, you must first request an access token via the OAuth handshake. Request OAuth authorization:
+
+```
+curl -X POST -vu clientapp:123456 http://localhost:8080/oauth/token -H "Accept: application/json" -d "password=aingeiR2&username=admin&grant_type=password&scope=read%20write&client_secret=123456&client_id=clientapp"
+```
+
+A successful authorization results in the following JSON response:
+
+```
+{
+"access_token":"9f6141c6-f296-45cf-a11d-58255e17bd91",
+"token_type":"bearer",
+"refresh_token":"c2c8e625-e2e6-4bf3-be5b-5db629e14e1c","expires_in":43199,
+"scope":"read write"
+}
+```
+
+In order to access the protected user resource, you should registrate. 
+
+```
+curl -X POST  http://localhost:8080/registration -H "Accept: application/json" -d "{"name":"George","login":"alpha","password":"password1"}"
+```
+
+After that you should send request an access token via the OAuth handshake. Request OAuth authorization:
+
+```
+curl -X POST -vu clientapp:123456 http://localhost:8080/oauth/token -H "Accept: application/json" -d "password=password1&username=alpha&grant_type=password&scope=read%20write&client_secret=123456&client_id=clientapp"
+```
+
+or used example user
+
+```
+curl -X POST -vu clientapp:123456 http://localhost:8080/oauth/token -H "Accept: application/json" -d "password=aingeiR2&username=user&grant_type=password&scope=read%20write&client_secret=123456&client_id=clientapp"
+```
+
+A successful authorization results in the following JSON response:
+
+```
+{
+"access_token":"bc096c33-4b94-4141-9ad3-85f00324ca7c",
+"token_type":"bearer",
+"refresh_token":"19ee17da-58a9-4a4a-91f8-1110336b102a",
+"expires_in":43199,
+"scope":"read write"
+}
+```
+Use the access_token returned to make the authorized request to the protected endpoint:
+
+# Admin Request Example
+
+```
+curl http://localhost:8080/admin/restaurants -H "Authorization: Bearer 9f6141c6-f296-45cf-a11d-58255e17bd91"
+```
+
+```
+curl X POST http://localhost:8080/admin/restaurants -H "Authorization: Bearer 9f6141c6-f296-45cf-a11d-58255e17bd91" -d
+"{"name":"Good Food","descriptions":"Test Restaurant"}"
+```
+
+```
+curl X PUT http://localhost:8080/admin/restaurants/1 -H "Authorization: Bearer 9f6141c6-f296-45cf-a11d-58255e17bd91" -d
+"{"name":"Good Food2","descriptions":"Test Restaurant3"}"
+```
+
+```
+curl X DELETE http://localhost:8080/admin/restaurants/1 -H "Authorization: Bearer 9f6141c6-f296-45cf-a11d-58255e17bd91" 
+```
+
+```
+curl http://localhost:8080/admin/restaurants/1/orders -H "Authorization: Bearer 9f6141c6-f296-45cf-a11d-58255e17bd91"
+```
+
+```
+curl http://localhost:8080/admin/restaurants/1/lunchToday -H "Authorization: Bearer 9f6141c6-f296-45cf-a11d-58255e17bd91"
+```
+
+```
+curl http://localhost:8080/admin/restaurants/1/lunchTomorrow -H "Authorization: Bearer 9f6141c6-f296-45cf-a11d-58255e17bd91"
+```
+
+```
+curl X POST http://localhost:8080/admin/restaurants/1/lunch  -H "Authorization: Bearer 9f6141c6-f296-45cf-a11d-58255e17bd91" -d
+"{"name":"fresh menu","description":"fsdfsd","updated":1450702800000,"dishes":[{"name":"egs","description":"1","price":20.00,"count":1,"calories":150},{"name":"voter","description":"2","price":50.00,"count":1,"calories":0}]}"
+```
+
+```
+curl X PUT http://localhost:8080/admin/restaurants/1/lunch -H "Authorization: Bearer 9f6141c6-f296-45cf-a11d-58255e17bd91" -d
+"{"name":"fresh menu","description":"fsdfsd","updated":1450702800000,"dishes":[{"name":"egs","description":"1","price":20.00,"count":3,"calories":150},{"name":"voter","description":"2","price":50.00,"count":1,"calories":0}]}"
+```
+
+```
+curl X DELETE http://localhost:8080/admin/restaurants/1/lunch/fresh%20menu  -H "Authorization: Bearer 9f6141c6-f296-45cf-a11d-58255e17bd91" 
+```
+
+# User Request Example
+
+
+```
+curl http://localhost:8080/user/restaurants -H "Authorization: Bearer bc096c33-4b94-4141-9ad3-85f00324ca7c"
+```
+
+```
+curl http://localhost:8080/user/order -H "Authorization: Bearer bc096c33-4b94-4141-9ad3-85f00324ca7c"
+```
+
+```
+curl X POST http://localhost:8080/user/restaurants/1/lunch/fresh%20menu/order -H "Authorization: Bearer bc096c33-4b94-4141-9ad3-85f00324ca7c" 
+```
+
+```
+curl X DELETE http://localhost:8080/user/order -H "Authorization: Bearer bc096c33-4b94-4141-9ad3-85f00324ca7c" 
+```
+
+#SSL
+
+To configure the project to run on HTTPS as shown in Building REST services with Spring, enable the https profile. You can do this by uncommenting the appropriate line in the application.properties file of this project. This will change the server port to 8443. Modify the previous requests as in the following command.
+
+...
+curl -X POST -k -vu clientapp:123456 https://localhost:8443/oauth/token -H "Accept: application/json" -d "password=aingeiR2&username=admin&grant_type=password&scope=read%20write&client_secret=123456&client_id=clientapp"
+...
+
+The -k parameter is necessary to allow connections to SSL sites without valid certificates or the self signed certificate which is created for this project.
