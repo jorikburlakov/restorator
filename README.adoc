@@ -31,7 +31,7 @@ run Application.java
 
 or run like WebApp
 
-#Endpoints
+# Endpoints
 
 Public:
 
@@ -119,3 +119,52 @@ A successful authorization results in the following JSON response:
 "scope":"read write"
 }
 ```
+Use the access_token returned to make the authorized request to the protected endpoint:
+
+# Admin Request Example
+
+```
+curl http://localhost:8080/admin/restaurants -H "Authorization: Bearer 9f6141c6-f296-45cf-a11d-58255e17bd91"
+```
+
+```
+curl X POST http://localhost:8080/admin/restaurants -H "Authorization: Bearer 9f6141c6-f296-45cf-a11d-58255e17bd91" -d
+"{"name":"Good Food","descriptions":"Test Restaurant"}"
+```
+
+```
+curl X PUT http://localhost:8080/admin/restaurants/1 -H "Authorization: Bearer 9f6141c6-f296-45cf-a11d-58255e17bd91" -d
+"{"name":"Good Food2","descriptions":"Test Restaurant3"}"
+```
+
+```
+curl X DELETE http://localhost:8080/admin/restaurants/1 -H "Authorization: Bearer 9f6141c6-f296-45cf-a11d-58255e17bd91" 
+```
+
+```
+curl http://localhost:8080/admin/restaurants/1/orders -H "Authorization: Bearer 9f6141c6-f296-45cf-a11d-58255e17bd91"
+```
+
+```
+curl http://localhost:8080/admin/restaurants/1/lunchToday -H "Authorization: Bearer 9f6141c6-f296-45cf-a11d-58255e17bd91"
+```
+
+```
+curl http://localhost:8080/admin/restaurants/1/lunchTomorrow -H "Authorization: Bearer 9f6141c6-f296-45cf-a11d-58255e17bd91"
+```
+
+```
+curl X POST http://localhost:8080/admin/restaurants/1/lunch  -H "Authorization: Bearer 9f6141c6-f296-45cf-a11d-58255e17bd91" -d
+"{"name":"fresh menu","description":"fsdfsd","updated":1450702800000,"dishes":[{"name":"egs","description":"1","price":20.00,"count":1,"calories":150},{"name":"voter","description":"2","price":50.00,"count":1,"calories":0}]}"
+```
+
+```
+curl X PUT http://localhost:8080/admin/restaurants/1/lunch -H "Authorization: Bearer 9f6141c6-f296-45cf-a11d-58255e17bd91" -d
+"{"name":"fresh menu","description":"fsdfsd","updated":1450702800000,"dishes":[{"name":"egs","description":"1","price":20.00,"count":3,"calories":150},{"name":"voter","description":"2","price":50.00,"count":1,"calories":0}]}"
+```
+
+```
+curl X DELETE http://localhost:8080/admin/restaurants/1/lunch/fresh%20menu  -H "Authorization: Bearer 9f6141c6-f296-45cf-a11d-58255e17bd91" 
+```
+
+# User Request Example
